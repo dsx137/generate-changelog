@@ -10,8 +10,8 @@ inputs:
   branch:
     description: "branch name"
     default: HEAD
-  grep_params:
-    description: "grep parameters"
+  regex:
+    description: "regex"
     default: ""
 
 outputs:
@@ -32,14 +32,14 @@ runs:
       shell: bash
       env:
         BRANCH: ${{ inputs.branch }}
-        GREP_PARAMS: ${{ inputs.grep_params }}
+        REGEX: ${{ inputs.regex }}
       run: |
         function GENERATE_CHANGELOG(){
           local branch="$1"
           shift
           local grep_params=("$@")
           
-          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep "${grep_params[@]}" | tail -1)"
+          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$REGEX" | tail -1)"
           local limit="-1"
           if [ -n "$tag" ]; then
             limit="$tag..HEAD"
