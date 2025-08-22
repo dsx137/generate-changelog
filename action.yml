@@ -1,4 +1,4 @@
-name: "Generate Changelog"
+name: "Generate Changelog From Previous Commits"
 description: "Generate a changelog for the repository based on commit messages from the previous tag."
 author: "dsx137"
 
