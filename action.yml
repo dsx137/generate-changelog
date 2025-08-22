@@ -40,10 +40,12 @@ runs:
       run: |
         function GENERATE_CHANGELOG(){
           local branch="$1"
+          local include="$2"
+          local exclude="$3"
           shift
           local grep_params=("$@")
           
-          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$INCLUDE" | grep -vE "$EXCLUDE" | tail -1)"
+          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$include" | grep -vE "$exclude" | tail -1)"
           local limit="-1"
           if [ -n "$tag" ]; then
             limit="$tag..HEAD"
@@ -53,10 +55,10 @@ runs:
           echo "$changelog"
         }
 
-        if [ -z "$BRANCH" ] || [ -z "$GREP_PARAMS" ]; then
-          echo "invalid params! use: xx.sh <branch> <grep_params>" >&2
+        if [ -z "$BRANCH" ]; then
+          echo "invalid params! use: xx.sh <branch> [include] [exclude]" >&2
           exit 1
         fi
 
-        changelog="$(GENERATE_CHANGELOG "$BRANCH" "${GREP_PARAMS[@]}")"
+        changelog="$(GENERATE_CHANGELOG "$BRANCH" "$INCLUDE" "$EXCLUDE")"
         echo "changelog=$changelog" >> "$GITHUB_OUTPUT"
