@@ -7,10 +7,10 @@ branding:
   color: "blue"
 
 inputs:
-  BRANCH:
+  branch:
     description: "branch name"
     default: HEAD
-  GREP_PARAMS:
+  grep_params:
     description: "grep parameters"
     default: ""
 
@@ -31,8 +31,8 @@ runs:
       id: generate_changelog
       shell: bash
       env:
-        BRANCH: ${{ inputs.BRANCH }}
-        GREP_PARAMS: ${{ inputs.GREP_PARAMS }}
+        BRANCH: ${{ inputs.branch }}
+        GREP_PARAMS: ${{ inputs.grep_params }}
       run: |
         function GENERATE_CHANGELOG(){
           local branch="$1"

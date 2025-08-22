@@ -31,8 +31,8 @@ jobs:
       - name: Generate Changelog
         uses: dsx137/generate-changelog@main
         id: generate_changelog
-        env:
-          GREP_PARAMS: "-v nightly"
+        with:
+          grep_params: "-v nightly"
 
       - name: Update Snapshot Release
         uses: andelf/nightly-release@main
