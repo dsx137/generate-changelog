@@ -28,7 +28,11 @@ runs:
     - name: Git Fetch Unshallow
       shell: bash
       run: |
-        git fetch --unshallow
+        if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+          echo "Not a git repository!" >&2
+          exit 1
+        fi
+        git fetch --unshallow || true
 
     - name: Generate Changelog
       id: generate_changelog
