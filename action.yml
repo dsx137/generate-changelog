@@ -10,9 +10,12 @@ inputs:
   branch:
     description: "branch name"
     default: HEAD
-  regex:
+  includes:
     description: "regex"
-    default: ""
+    default: ".*"
+  excludes:
+    description: "regex"
+    default: "(^$)."
 
 outputs:
   changelog:
@@ -39,7 +42,7 @@ runs:
           shift
           local grep_params=("$@")
           
-          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$REGEX" | tail -1)"
+          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$INCLUDES" | grep -vE "$EXCLUDES" | tail -1)"
           local limit="-1"
           if [ -n "$tag" ]; then
             limit="$tag..HEAD"

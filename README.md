@@ -4,5 +4,6 @@
 - uses: dsx137/generate_changelog@main
   with:
     branch: "main"
-    regex: "nightly"
+    includes: "nightly"
+    excludes: "^(Merge pull request|Merge branch|Merge tag)"
 ```
