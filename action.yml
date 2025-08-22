@@ -61,4 +61,8 @@ runs:
         fi
 
         changelog="$(GENERATE_CHANGELOG "$BRANCH" "$INCLUDE" "$EXCLUDE")"
-        echo "changelog=$changelog" >> "$GITHUB_OUTPUT"
+        {
+            echo 'changelog<<EOF'
+            echo "$changelog"
+            echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
