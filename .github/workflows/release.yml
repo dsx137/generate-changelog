@@ -29,7 +29,7 @@ jobs:
         run: echo "version=$(cat ./VERSION)" >> $GITHUB_OUTPUT
 
       - name: Generate Changelog
-        uses: dsx137/generate-changelog@main
+        uses: .
         id: generate_changelog
 
       - name: Update Snapshot Release
