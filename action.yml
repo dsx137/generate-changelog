@@ -1,0 +1,58 @@
+name: "Generate Changelog"
+description: "Generate a changelog for the repository based on commit messages from the previous tag."
+author: "dsx137"
+
+branding:
+  icon: "archive"
+  color: "blue"
+
+inputs:
+  BRANCH:
+    description: "branch name"
+    default: HEAD
+  GREP_PARAMS:
+    description: "grep parameters"
+    default: ""
+
+outputs:
+  changelog:
+    description: "Generated changelog"
+    value: ${{ steps.generate-changelog.outputs.changelog }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Git Fetch Unshallow
+      shell: bash
+      run: |
+        git fetch --unshallow
+
+    - name: Generate Changelog
+      id: generate_changelog
+      shell: bash
+      env:
+        BRANCH: ${{ inputs.BRANCH }}
+        GREP_PARAMS: ${{ inputs.GREP_PARAMS }}
+      run: |
+        function GENERATE_CHANGELOG(){
+          local branch="$1"
+          shift
+          local grep_params=("$@")
+          
+          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep "${grep_params[@]}" | tail -1)"
+          local limit="-1"
+          if [ -n "$tag" ]; then
+            limit="$tag..HEAD"
+          fi
+          local changelog="$(echo -ne "$(git log "$limit" --pretty=format:'- %s')")"
+          changelog="$(echo -e "$changelog" | sed 's/$/  /')"
+          echo "$changelog"
+        }
+
+        if [ -z "$BRANCH" ] || [ -z "$GREP_PARAMS" ]; then
+          echo "invalid params! use: xx.sh <branch> <grep_params>" >&2
+          exit 1
+        fi
+
+        changelog="$(GENERATE_CHANGELOG "$BRANCH" "${GREP_PARAMS[@]}")"
+        echo "changelog=$changelog" >> "$GITHUB_OUTPUT"
