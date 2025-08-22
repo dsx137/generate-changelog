@@ -10,10 +10,10 @@ inputs:
   branch:
     description: "branch name"
     default: HEAD
-  includes:
+  include:
     description: "regex"
     default: ".*"
-  excludes:
+  exclude:
     description: "regex"
     default: "(^$)."
 
@@ -35,14 +35,15 @@ runs:
       shell: bash
       env:
         BRANCH: ${{ inputs.branch }}
-        REGEX: ${{ inputs.regex }}
+        INCLUDE: ${{ inputs.include }}
+        EXCLUDE: ${{ inputs.exclude }}
       run: |
         function GENERATE_CHANGELOG(){
           local branch="$1"
           shift
           local grep_params=("$@")
           
-          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$INCLUDES" | grep -vE "$EXCLUDES" | tail -1)"
+          local tag="$(git --no-pager tag --sort=creatordate --merged "$branch" | grep -E "$INCLUDE" | grep -vE "$EXCLUDE" | tail -1)"
           local limit="-1"
           if [ -n "$tag" ]; then
             limit="$tag..HEAD"
